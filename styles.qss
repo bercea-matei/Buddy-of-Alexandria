@@ -1,0 +1,106 @@
+/* styles.qss */
+
+QWidget {
+    background-color: #2b2b2b;
+    color: #f0f0f0;
+    font-family: "Segoe UI", "Cantarell", "sans-serif";
+    font-size: 10pt;
+}
+
+QMainWindow, QDialog {
+    background-color: #3c3f41;
+}
+
+QTreeView {
+    background-color: #2b2b2b;
+    border: 1px solid #4a4a4a;
+    font-size: 9pt;
+}
+
+QTreeView::item:hover {
+    background-color: #4a4a4a;
+}
+
+QTreeView::item:selected {
+    background-color: #0d6efd; /* A bootstrap-like primary color */
+}
+
+QPlainTextEdit {
+    background-color: #2b2b2b;
+    color: #f0f0f0;
+    border: 1px solid #4a4a4a;
+    font-family: "Consolas", "Monaco", "monospace";
+}
+
+QTabWidget::pane {
+    border-top: 2px solid #3c3f41;
+}
+
+QTabBar::tab {
+    background: #2b2b2b;
+    border: 1px solid #2b2b2b;
+    padding: 8px 12px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+QTabBar::tab:selected {
+    background: #3c3f41;
+    border-bottom-color: #2b2b2b; /* Make it look connected */
+}
+
+QTabBar::tab:!selected:hover {
+    background: #4a4a4a;
+}
+
+QTabBar::close-button {
+    image: url(close.svg);
+    subcontrol-position: right;
+    subcontrol-origin: padding;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+QSplitter::handle {
+    background: #4a4a4a;
+}
+
+QSplitter::handle:hover {
+    background: #0d6efd;
+}
+
+QMenuBar {
+    background-color: #3c3f41;
+}
+
+QMenuBar::item:selected {
+    background-color: #4a4a4a;
+}
+
+QMenu {
+    background-color: #3c3f41;
+    border: 1px solid #4a4a4a;
+}
+
+QMenu::item:selected {
+    background-color: #0d6efd;
+}
+
+QDialog {
+    border: 1px solid #4a4a4a;
+}
+
+QPushButton {
+    background-color: #0d6efd;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+QPushButton:hover {
+    background-color: #0b5ed7;
+}
+
+QPushButton:pressed {
+    background-color: #0a58ca;
+}
