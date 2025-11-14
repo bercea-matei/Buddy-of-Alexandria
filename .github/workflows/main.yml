@@ -1,0 +1,24 @@
+name: Python CI/CD Pipeline
+
+on: push
+
+jobs:
+  lint-the-code:
+    name: Lint code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with: 
+          python-version: '3.13'
+
+      - name: Get Dependecies
+        run: pip install -r requirements.txt
+
+      - name: Run Flake8 linter
+        uses: py-actions/flake8@v2
+
+

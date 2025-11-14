@@ -97,7 +97,6 @@ output_value2
 FileTable:
 "test.in" --> file_descriptor
 ...
------------------------------------------
 
 This feature is invaluable for debugging and understanding the interpreter's behavior.
 💡 Example Programs

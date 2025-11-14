@@ -1,0 +1,10 @@
+# Application Dependencies
+PyQt6
+PyQt6-WebEngine
+Markdown
+
+# Development & Build Dependencies
+pytest
+flake8
+black
+pyinstaller

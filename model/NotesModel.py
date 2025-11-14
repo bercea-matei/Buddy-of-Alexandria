@@ -11,13 +11,12 @@ class NoteModel(QObject):
     Emits signals when data changes, allowing the View to react.
     """
 
-    # Signals that the View can connect to
     data_changed = pyqtSignal()
     settings_changed = pyqtSignal()
 
     def __init__(self):
         super().__init__()
-        self.open_files: Dict[str, str] = {}  # {filepath: content}
+        self.open_files: Dict[str, str] = {}
         self.unsaved_files: set[str] = set()
         self._untitled_counter = 1
         self.settings = self._load_settings()
@@ -71,7 +70,7 @@ class NoteModel(QObject):
             self.open_files[filepath] = content
             if filepath in self.unsaved_files:
                 self.unsaved_files.remove(filepath)
-            self.data_changed.emit()  # Notify to remove '*' from tab title
+            self.data_changed.emit()
         except IOError as e:
             print(f"Error saving file {filepath}: {e}")
 

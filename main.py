@@ -2,7 +2,7 @@
 
 import sys
 from PyQt6.QtWidgets import QApplication
-from model.model import NoteModel
+from model.NotesModel import NoteModel
 from view.MainView import MainView
 from controller.controller import Controller
 
