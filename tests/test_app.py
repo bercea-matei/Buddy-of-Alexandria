@@ -1,6 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 
+
 def test_app_instantiation():
     """
     Tests if the main components can be created.
@@ -21,4 +22,3 @@ def test_app_instantiation():
     assert view is not None
     assert controller is not None
     assert app is not None
-    print("App components instantiated successfully.")

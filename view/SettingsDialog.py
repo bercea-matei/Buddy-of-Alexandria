@@ -1,4 +1,4 @@
-#SettingsDialog.py
+# SettingsDialog.py
 
 from PyQt6.QtWidgets import (
     QWidget,
@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import (
     QFont,
 )
+
 
 class SettingsDialog(QDialog):
     """A scrollable settings dialog."""

@@ -30,8 +30,6 @@ class MainView(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # TODO - get_font_from_settings
-
         documents_location = QStandardPaths.writableLocation(
             QStandardPaths.StandardLocation.DocumentsLocation
         )
@@ -56,12 +54,9 @@ class MainView(QMainWindow):
         splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(splitter)
 
-        # File tree view
         self.file_model = QFileSystemModel()
         self.file_model.setFilter(
-            QDir.Filter.AllDirs
-            | QDir.Filter.NoDotAndDotDot
-            | QDir.Filter.Files
+            QDir.Filter.AllDirs | QDir.Filter.NoDotAndDotDot | QDir.Filter.Files
         )
         self.file_model.setNameFilters(["*.md"])
         self.file_model.setNameFilterDisables(False)
@@ -77,20 +72,19 @@ class MainView(QMainWindow):
         self.file_tree = QTreeView()
         self.file_tree.setModel(self.file_model)
         self.file_tree.setRootIndex(self.file_model.index(self.root_path))
-        # Hide unnecessary columns
+
         self.file_tree.hideColumn(1)
         self.file_tree.hideColumn(2)
         self.file_tree.hideColumn(3)
         self.file_tree.setMinimumWidth(150)
         splitter.addWidget(self.file_tree)
 
-        # Tab view for editorsa
         self.tab_widget = QTabWidget()
         self.tab_widget.setTabsClosable(True)
         self.tab_widget.setMovable(True)
         splitter.addWidget(self.tab_widget)
 
-        splitter.setSizes([250, 1150])  # Initial size ratioa
+        splitter.setSizes([250, 1150])
 
     def _create_menu(self):
         menu_bar = self.menuBar()
