@@ -22,6 +22,5 @@ jobs:
         uses: psf/black@stable
         with:
           options: "--check --verbose"
-          src: "./src"
 
 
