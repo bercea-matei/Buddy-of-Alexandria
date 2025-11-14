@@ -54,7 +54,7 @@ QTabBar::tab:!selected:hover {
 }
 
 QTabBar::close-button {
-    image: url(close.svg);
+    image: url(assets/svg/close.svg);
     subcontrol-position: right;
     subcontrol-origin: padding;
     padding: 2px;

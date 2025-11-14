@@ -5,7 +5,8 @@ from PyQt6.QtWidgets import QFileDialog, QMessageBox
 from PyQt6.QtCore import QObject
 from PyQt6.QtGui import QFont
 
-from view import SettingsDialog, LiveMarkdownEditor
+from view.SettingsDialog import SettingsDialog
+from view.LiveMarkdownEditor import LiveMarkdownEditor
 
 
 class Controller(QObject):
@@ -15,7 +16,7 @@ class Controller(QObject):
         super().__init__()
         self._model = model
         self._view = view
-        self._current_font = self._get_font_from_settings()
+        self._current_font = self.get_font_from_settings()
 
         # Connect signals from view to controller slots
         self._view.open_folder_action.triggered.connect(self.open_folder)
@@ -133,13 +134,14 @@ class Controller(QObject):
 
     def on_model_settings_changed(self):
         """Apply new settings to the application."""
-        self._current_font = self._get_font_from_settings()
+        self._current_font = self.get_font_from_settings()
         for i in range(self._view.tab_widget.count()):
             tab = self._view.tab_widget.widget(i)
             if isinstance(tab, LiveMarkdownEditor):
                 tab.setFont(self._current_font)
+                tab.update_highlighter_formats()
 
-    def _get_font_from_settings(self):
+    def get_font_from_settings(self):
         family = self._model.get_setting("font_family", "Consolas")
         size = self._model.get_setting("font_size", 12)
         return QFont(family, size)

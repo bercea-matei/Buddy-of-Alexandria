@@ -1,0 +1,82 @@
+# =========================================================================
+# Python
+# =========================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# =========================================================================
+# Virtual Environments
+# =========================================================================
+
+# Standard virtual environment folders
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# =========================================================================
+# User-Specific Files & IDE Configuration
+# =========================================================================
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# User-specific settings (like window size, last open files, etc.)
+# If your IDE generates them.
+.DS_Store
+Thumbs.db
+
+# =========================================================================
+# Application-Specific Files
+# =========================================================================
+
+# The user's settings file.
+settings.json
+
+# Log files, if you add logging later
+*.log
+
+# =========================================================================
+# Testing & Code Coverage
+# =========================================================================
+.pytest_cache/
+.coverage
+.tox/
+htmlcov/
