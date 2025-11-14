@@ -19,8 +19,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Black linter
-        uses: psf/black
+        uses: psf/black@stable
         with:
           options: "--check --verbose"
+          src: "./src"
 
 
