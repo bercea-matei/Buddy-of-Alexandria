@@ -34,8 +34,11 @@ jobs:
       - name: Get Dependencies
         run: pip install -r requirements.txt
 
+      - name: get Xvfb
+        run: sudo apt-get update && sudo apt-get install xvfb 
+
       - name: Run tests
-        run: pytest
+        run: xvfb-run pytest
 #test coverage
 #create & upload artifacts
 #create releases?
