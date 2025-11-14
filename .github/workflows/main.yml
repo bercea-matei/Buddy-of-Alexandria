@@ -18,7 +18,9 @@ jobs:
       - name: Get Dependecies
         run: pip install -r requirements.txt
 
-      - name: Run Flake8 linter
-        uses: py-actions/flake8@v2
+      - name: Run Black linter
+        uses: psf/black
+        with:
+          options: "--check --verbose"
 
 

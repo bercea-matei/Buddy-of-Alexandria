@@ -59,7 +59,9 @@ class MainView(QMainWindow):
         # File tree view
         self.file_model = QFileSystemModel()
         self.file_model.setFilter(
-            QDir.Filter.AllDirs | QDir.Filter.NoDotAndDotDot | QDir.Filter.Files
+            QDir.Filter.AllDirs
+            | QDir.Filter.NoDotAndDotDot
+            | QDir.Filter.Files
         )
         self.file_model.setNameFilters(["*.md"])
         self.file_model.setNameFilterDisables(False)
@@ -144,5 +146,4 @@ class MainView(QMainWindow):
         Override the main window's close event.
         Delegate the decision-making to the controller.
         """
-        # The controller will decide whether to event.accept() or event.ignore()
         self.controller.handle_exit_request(event)

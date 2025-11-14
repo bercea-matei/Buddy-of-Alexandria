@@ -73,7 +73,6 @@ class MarkdownHighlighter(QSyntaxHighlighter):
         if text.startswith("> "):
             self.editor.format_block_as_blockquote(block_number)
         elif re.match(r"^\s*([\*\-\+])\s", text):
-            # For list items, we only want the structural change to happen on non-active lines
             if not is_current_line:
                 self.editor.format_block_as_list(block_number)
         # else:
@@ -109,7 +108,9 @@ class MarkdownHighlighter(QSyntaxHighlighter):
         for match in re.finditer(r"(\~)([^\~]+)(\~)", text):
             self.setFormat(match.start(1), 1, self.syntax_format)  # Hide opening *
             self.setFormat(
-                match.start(2), len(match.group(2)), self.formats["strikethrough"]
+                match.start(2),
+                len(match.group(2)),
+                self.formats["strikethrough"],
             )
             self.setFormat(match.start(3), 1, self.syntax_format)  # Hide closing *
 

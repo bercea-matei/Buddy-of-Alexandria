@@ -5,6 +5,5 @@ Markdown
 
 # Development & Build Dependencies
 pytest
-flake8
 black
 pyinstaller

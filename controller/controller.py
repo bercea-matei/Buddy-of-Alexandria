@@ -61,7 +61,8 @@ class Controller(QObject):
             reply = QMessageBox.question(
                 self._view,
                 "Unsaved Changes",
-                f"'{os.path.basename(filepath)}' has unsaved changes. Do you want to close it anyway?",
+                f"'{os.path.basename(filepath)}' has unsaved changes."
+                + "Do you want to close it anyway?",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.No,
             )
@@ -106,7 +107,10 @@ class Controller(QObject):
                 self._view.tab_widget.setTabText(index, title)
 
     def on_editor_text_changed(self, filepath):
-        """When user types, get content from the active widget, update model, and mark as unsaved."""
+        """
+        When user types, get content from the active widget,
+        update model, and mark as unsaved.
+        """
         current_widget = self._view.tab_widget.currentWidget()
         # Ensure we're not getting a signal from a tab that is not in focus
         if current_widget and current_widget.filepath == filepath:
@@ -147,7 +151,8 @@ class Controller(QObject):
         return QFont(family, size)
 
     def focus_tab(self, filepath):
-        """Sets the currently visible tab to the one with the given filepath."""
+        """Sets the currently visible tab to the one
+        with the given filepath."""
         for i in range(self._view.tab_widget.count()):
             if self._view.tab_widget.widget(i).filepath == filepath:
                 self._view.tab_widget.setCurrentIndex(i)
@@ -159,15 +164,10 @@ class Controller(QObject):
 
     def save_all_unsaved_files(self):
         """Iterate through all unsaved files and save their content."""
-        # Create a copy of the set to avoid issues with modifying it while iterating
         for filepath in list(self._model.unsaved_files):
-            # For "Untitled" files, we can't save without user input, so we skip them.
-            # A more advanced implementation might prompt the user for each one.
             if filepath.startswith("Untitled-"):
-                # For this implementation, we will just save the currently active untitled file
-                # if it's the one we're on. A full implementation could loop and ask for each.
                 if self._view.get_current_filepath() == filepath:
-                    self.save_current_file()  # This will trigger the "Save As" dialog
+                    self.save_current_file()
                 continue
 
             tab_widget = self._view.get_tab_by_filepath(filepath)
@@ -188,7 +188,9 @@ class Controller(QObject):
         dialog = QMessageBox(self._view)
         dialog.setIcon(QMessageBox.Icon.Warning)
         dialog.setText("You have unsaved changes.")
-        dialog.setInformativeText("Do you want to save your changes before exiting?")
+        dialog.setInformativeText(
+            "Do you want to save your" + "changes before exiting?"
+        )
         dialog.setStandardButtons(
             QMessageBox.StandardButton.Save
             | QMessageBox.StandardButton.Discard
