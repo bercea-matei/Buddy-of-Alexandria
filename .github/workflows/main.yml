@@ -4,23 +4,39 @@ on: push
 
 jobs:
   lint-the-code:
-    name: Lint code
+    name: All checks then build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-
-      - name: Set up Python environment
-        uses: actions/setup-python@v4
-        with: 
-          python-version: '3.13'
-
-      - name: Get Dependecies
-        run: pip install -r requirements.txt
 
       - name: Run Black linter
         uses: psf/black@stable
         with:
           options: "--check --verbose"
 
+  test-to-build:
+    name: All checks then build
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with: 
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Get Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest
+#test coverage
+#create & upload artifacts
+#create releases?
 
