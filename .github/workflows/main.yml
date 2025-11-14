@@ -37,7 +37,7 @@ jobs:
       - name: get Xvfb
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb libegl1 libopengl0 libxkbcommon-x11-0 libdbus-1-3
+          sudo apt-get install -y libxcb1 xvfb libegl1 libopengl0 libxkbcommon-x11-0 libdbus-1-3
 
       - name: Run tests
         #run: xvfb-run pytest
