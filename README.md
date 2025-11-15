@@ -3,7 +3,7 @@
 
 This application is a dedicated learning companion that bridges the gap between note-taking and studying, empowering you to learn smarter not harder:
  - **Boost Engagement:** Visualize your progress and discover new topics with dynamic roadmaps and intelligent suggestions.   
-- **Maximize Retention:** Transform passive notes into active knowledge using fully customizable quizzes and testing frameworks."
+- **Maximize Retention:** Transform passive notes into active knowledge using fully customizable quizzes and testing frameworks.
 
 ### ⚠️ This Project is a Work in Progress
 
@@ -13,7 +13,7 @@ Feel free to explore, but please be aware that features may change.
 
 ### 🗺️ Roadmap
 - [ ] Vector Database & embedding process (search based on meaning not keywords)
-- [ ] Add AI summarization of notes
+- [ ] Add AI summarization of notes (RAG)
 - [ ] Suggestions
 	- [ ] suggest ares of improvements (where to fill gaps and not how to fill them)
 	- [ ] suggest further exploration topic (gives direction)

@@ -36,7 +36,7 @@ class MarkdownHighlighter(QSyntaxHighlighter):
             fmt = QTextCharFormat()
             fmt.setFont(base_font)
             fmt.setFontWeight(QFont.Weight.Bold)
-            fmt.setFontPointSize(base_point_size + 28 - 4 * i)
+            fmt.setFontPointSize(base_point_size + 16 - int(3.5 * i))
             self.heading_formats.append(fmt)
 
         # --- BOLD FORMAT ---
