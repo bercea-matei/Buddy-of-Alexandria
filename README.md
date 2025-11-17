@@ -31,11 +31,11 @@ Feel free to explore, but please be aware that features may change.
 - [ ] Check notes integrity
 - [ ] Create Roadmap / Course
 
-### Current Status:
+### 🖼️ Current Status:
 - Just rushed a simple rough markdown editor (no AI)
 - From here on-wards we will add the AI features
 
-### ⚙️Current editor features:
+### ⚙️ Current editor features:
 - Left side file tree
 - Markdown editor (simulated) for:
 	- Headline (1 to 6 #'s)

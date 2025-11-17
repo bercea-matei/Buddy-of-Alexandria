@@ -1,22 +1,30 @@
 # controller.py
 
 import os
-from PyQt6.QtWidgets import QFileDialog, QMessageBox
-from PyQt6.QtCore import QObject
+from PyQt6.QtWidgets import QFileDialog, QMessageBox, QApplication
+from PyQt6.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QFont
+
 
 from view.SettingsDialog import SettingsDialog
 from view.LiveMarkdownEditor import LiveMarkdownEditor
+
+from controller.AIWorker import AIWorker
 
 
 class Controller(QObject):
     """Connects the Model and the View."""
 
-    def __init__(self, model, view):
+    start_ai_query = pyqtSignal(str)
+
+    def __init__(self, model, view, index_manager):
         super().__init__()
         self._model = model
         self._view = view
+        self._index_manager = index_manager
         self._current_font = self.get_font_from_settings()
+        if hasattr(self._view, "chat_widget"):
+            self._view.chat_widget.controller = self
 
         # Connect signals from view to controller slots
         self._view.open_folder_action.triggered.connect(self.open_folder)
@@ -29,6 +37,19 @@ class Controller(QObject):
         # Connect signals from model to view/controller slots
         self._model.data_changed.connect(self.on_model_data_changed)
         self._model.settings_changed.connect(self.on_model_settings_changed)
+
+        self.ai_thread = QThread()
+        self.ai_worker = AIWorker(self._index_manager)
+        self.ai_worker.moveToThread(self.ai_thread)
+
+        self.start_ai_query.connect(self.ai_worker.run_query)
+        self.ai_worker.result_ready.connect(self.handle_ai_response)
+        self.ai_worker.error_occurred.connect(self.handle_ai_error)
+        app = QApplication.instance()
+        if app:
+            app.aboutToQuit.connect(self.cleanup_thread)
+
+        self.ai_thread.start()
 
     def show(self):
         self._view.show()
@@ -79,21 +100,18 @@ class Controller(QObject):
             for i in range(self._view.tab_widget.count())
         }
 
-        # Close tabs no longer in model
         for path in set(current_tabs.keys()) - set(open_files.keys()):
             self._view.tab_widget.removeTab(current_tabs[path])
 
-        # Add or update tabs
         for path, content in open_files.items():
             title = os.path.basename(path)
             if path in self._model.unsaved_files:
-                title += "*"  # Initiative: Mark unsaved files
+                title += "*"
 
             if path not in current_tabs:
                 editor_widget = LiveMarkdownEditor(path, self._current_font)
                 editor_widget.set_content(content)
 
-                # Connect the textChanged signal to update the model
                 editor_widget.textChanged.connect(
                     lambda p=path: self.on_editor_text_changed(p)
                 )
@@ -102,7 +120,7 @@ class Controller(QObject):
                 self._view.tab_widget.setTabToolTip(
                     self._view.tab_widget.count() - 1, path
                 )
-            else:  # Update existing tab title (e.g., for unsaved marker)
+            else:
                 index = current_tabs[path]
                 self._view.tab_widget.setTabText(index, title)
 
@@ -112,7 +130,7 @@ class Controller(QObject):
         update model, and mark as unsaved.
         """
         current_widget = self._view.tab_widget.currentWidget()
-        # Ensure we're not getting a signal from a tab that is not in focus
+
         if current_widget and current_widget.filepath == filepath:
             content = current_widget.get_content()
             self._model.update_content(filepath, content)
@@ -135,6 +153,7 @@ class Controller(QObject):
                 self._model.save_new_file(filepath, new_filepath, content)
         else:
             self._model.save_file(filepath, content)
+            self._index_manager.update_file_node(filepath)
 
     def on_model_settings_changed(self):
         """Apply new settings to the application."""
@@ -180,11 +199,9 @@ class Controller(QObject):
         Called by the View's closeEvent. Determines if the app should close.
         """
         if not self._model.unsaved_files:
-            # If there are no unsaved changes, accept the event and close.
             event.accept()
             return
 
-        # There are unsaved changes, so we must ask the user.
         dialog = QMessageBox(self._view)
         dialog.setIcon(QMessageBox.Icon.Warning)
         dialog.setText("You have unsaved changes.")
@@ -201,12 +218,47 @@ class Controller(QObject):
         user_choice = dialog.exec()
 
         if user_choice == QMessageBox.StandardButton.Save:
-            # User wants to save.
             self.save_all_unsaved_files()
-            event.accept()  # Proceed with closing
+            event.accept()
         elif user_choice == QMessageBox.StandardButton.Discard:
-            # User doesn't want to save.
-            event.accept()  # Proceed with closing
-        else:  # Cancel
-            # User cancelled the exit.
-            event.ignore()  # Abort the close operation
+            event.accept()
+        else:
+            event.ignore()
+
+    def cleanup_thread(self):
+        """Safely stops the worker thread."""
+        if self.ai_thread.isRunning():
+            print("Quitting AI worker thread...")
+            self.ai_thread.quit()
+            self.ai_thread.wait()  # Wait for the thread to fully stop
+            print("AI worker thread finished.")
+
+    def handle_send_chat_message(self):
+        """
+        Slot that is called when the user clicks 'Send' or presses Enter.
+        """
+        chat_widget = self._view.chat_widget
+        user_text = chat_widget.get_input_text()
+
+        if not user_text.strip():
+            return
+        chat_widget.add_message("User", user_text)
+        chat_widget.add_message("BoA", "Hmm...")
+
+        self.start_ai_query.emit(user_text)
+
+    @pyqtSlot(str)
+    def handle_ai_response(self, ai_text):
+        """
+        This slot runs in the main GUI thread, so it's safe to update the UI.
+        """
+        chat_widget = self._view.chat_widget
+        # Here you would ideally replace the "Thinking..." message,
+        # but for simplicity, we'll just append the answer.
+        chat_widget.add_message("AI", ai_text)
+
+    @pyqtSlot(str)
+    def handle_ai_error(self, error_message):
+        """Handles any errors that occurred in the worker thread."""
+        chat_widget = self._view.chat_widget
+        chat_widget.add_message("System", f"An error occurred: {error_message}")

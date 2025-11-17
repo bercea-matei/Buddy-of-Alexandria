@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QSplitter,
     QTreeView,
     QTabWidget,
+    QDockWidget,
 )
 from PyQt6.QtGui import (
     QFileSystemModel,
@@ -22,6 +23,9 @@ from PyQt6.QtGui import (
     QAction,
     QKeySequence,
 )
+from view.ChatWidget import ChatWidget
+
+APP_FOLDER_NAME = "BoA"
 
 
 class MainView(QMainWindow):
@@ -33,18 +37,23 @@ class MainView(QMainWindow):
         documents_location = QStandardPaths.writableLocation(
             QStandardPaths.StandardLocation.DocumentsLocation
         )
-        app_folder_name = "Academic-Weapon"
-        self.root_path = os.path.join(documents_location, app_folder_name)
+
+        self.root_path = os.path.join(documents_location, APP_FOLDER_NAME)
 
         self.setWindowTitle("Buddy of Alexandria")
         self.setGeometry(100, 100, 1400, 900)
 
         self._create_widgets()
+        self._create_docks()
         self._create_menu()
         self._load_stylesheet()
 
     def set_controller(self, controller):
         self.controller = controller
+        self._after_controller_setup()
+
+    def _after_controller_setup(self):
+        self.chat_widget.set_controller(self.controller)
 
     def _create_widgets(self):
         main_widget = QWidget()
@@ -86,6 +95,17 @@ class MainView(QMainWindow):
 
         splitter.setSizes([250, 1150])
 
+    def _create_docks(self):
+        """Creates all the dockable widgets for the application."""
+        self.ai_chat_dock = QDockWidget("AI Chat", self)
+        self.ai_chat_dock.setObjectName("AIChatDock")
+
+        self.chat_widget = ChatWidget(controller=None)
+
+        self.ai_chat_dock.setWidget(self.chat_widget)
+
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.ai_chat_dock)
+
     def _create_menu(self):
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu("&File")
@@ -105,6 +125,9 @@ class MainView(QMainWindow):
         self.exit_action = QAction("E&xit", self)
         self.exit_action.triggered.connect(self.close)
         file_menu.addAction(self.exit_action)
+
+        view_menu = menu_bar.addMenu("&View")
+        view_menu.addAction(self.ai_chat_dock.toggleViewAction())
 
         tools_menu = menu_bar.addMenu("&Tools")
         self.settings_action = QAction("&Settings...", self)
