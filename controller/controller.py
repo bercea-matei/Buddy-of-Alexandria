@@ -51,6 +51,9 @@ class Controller(QObject):
 
         self.ai_thread.start()
 
+    def __del__(self) -> None:
+        self.cleanup_thread()
+
     def show(self) -> None:
         """Display everything"""
         self._view.show()
