@@ -18,7 +18,6 @@ if __name__ == "__main__":
     model = NoteModel()
     view = MainView()
     index_manager = IndexManager(docs_directory)
-    # index_manager.re_build_all()
     controller = Controller(model, view, index_manager)
     view.set_controller(controller)
 

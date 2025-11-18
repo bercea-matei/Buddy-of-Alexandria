@@ -31,7 +31,7 @@ APP_FOLDER_NAME = "BoA"
 class MainView(QMainWindow):
     """The main application window."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         documents_location = QStandardPaths.writableLocation(
@@ -48,14 +48,17 @@ class MainView(QMainWindow):
         self._create_menu()
         self._load_stylesheet()
 
-    def set_controller(self, controller):
+    def set_controller(self, controller) -> None:
+        """We need to connect the controller and do some setup"""
         self.controller = controller
         self._after_controller_setup()
 
-    def _after_controller_setup(self):
+    def _after_controller_setup(self) -> None:
+        """Run all the methods that require the controller to exist"""
         self.chat_widget.set_controller(self.controller)
 
-    def _create_widgets(self):
+    def _create_widgets(self) -> None:
+        """Populate Main Window with widgets"""
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
 
@@ -95,9 +98,9 @@ class MainView(QMainWindow):
 
         splitter.setSizes([250, 1150])
 
-    def _create_docks(self):
+    def _create_docks(self) -> None:
         """Creates all the dockable widgets for the application."""
-        self.ai_chat_dock = QDockWidget("AI Chat", self)
+        self.ai_chat_dock = QDockWidget("BoA chatting session", self)
         self.ai_chat_dock.setObjectName("AIChatDock")
 
         self.chat_widget = ChatWidget(controller=None)
@@ -106,7 +109,8 @@ class MainView(QMainWindow):
 
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.ai_chat_dock)
 
-    def _create_menu(self):
+    def _create_menu(self) -> None:
+        """Menu for settings and preferences"""
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu("&File")
 
@@ -122,7 +126,7 @@ class MainView(QMainWindow):
         file_menu.addAction(self.save_file_action)
 
         file_menu.addSeparator()
-        self.exit_action = QAction("E&xit", self)
+        self.exit_action = QAction("&Exit", self)
         self.exit_action.triggered.connect(self.close)
         file_menu.addAction(self.exit_action)
 
@@ -133,7 +137,8 @@ class MainView(QMainWindow):
         self.settings_action = QAction("&Settings...", self)
         tools_menu.addAction(self.settings_action)
 
-    def _load_stylesheet(self):
+    def _load_stylesheet(self) -> None:
+        """Make it pretty"""
         style_sheet = "assets/styles.qss"
         try:
             with open(style_sheet, "r") as f:
@@ -141,16 +146,18 @@ class MainView(QMainWindow):
         except FileNotFoundError:
             print("Stylesheet not found. Using default style.")
 
-    def set_file_tree_root(self, path):
+    def set_file_tree_root(self, path) -> None:
+        """Set project root"""
         self.file_tree.setRootIndex(self.file_model.index(path))
 
-    def get_current_filepath(self):
+    def get_current_filepath(self) -> None:
+        """Get current filepath"""
         if self.tab_widget.currentIndex() >= 0:
             current_widget = self.tab_widget.currentWidget()
             return current_widget.filepath
         return None
 
-    def get_tab_by_filepath(self, filepath):
+    def get_tab_by_filepath(self, filepath) -> None | QWidget:
         """Helper to find a tab widget instance by its filepath."""
         for i in range(self.tab_widget.count()):
             widget = self.tab_widget.widget(i)
@@ -158,7 +165,7 @@ class MainView(QMainWindow):
                 return widget
         return None
 
-    def closeEvent(self, event):
+    def closeEvent(self, event) -> None:
         """
         Override the main window's close event.
         Delegate the decision-making to the controller.

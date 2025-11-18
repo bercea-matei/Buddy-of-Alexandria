@@ -12,7 +12,8 @@ Welcome! This app is currently being built as a learning experience to explore A
 Feel free to explore, but please be aware that features may change.
 
 ### 🗺️ Roadmap
-- [ ] Vector Database & embedding process (search based on meaning not keywords)
+- [x] Vector Database & embedding process (search based on meaning not keywords)
+    - [ ] Let the user choose the result they want? 
 - [ ] Add AI summarization of notes (RAG)
 - [ ] Suggestions
 	- [ ] suggest ares of improvements (where to fill gaps and not how to fill them)

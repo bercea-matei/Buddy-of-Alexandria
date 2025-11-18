@@ -18,7 +18,7 @@ from PyQt6.QtGui import (
 class SettingsDialog(QDialog):
     """A scrollable settings dialog."""
 
-    def __init__(self, settings, parent=None):
+    def __init__(self, settings, parent=None) -> None:
         super().__init__(parent)
         self.setWindowTitle("Settings")
         self.setMinimumWidth(400)
@@ -43,8 +43,6 @@ class SettingsDialog(QDialog):
         self.font_size_spinbox.setMaximum(72)
         self.font_size_spinbox.setValue(settings.get("font_size", 12))
         form_layout.addRow("Font Size:", self.font_size_spinbox)
-
-        # Add more settings here in the future
 
         self.button_box = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel

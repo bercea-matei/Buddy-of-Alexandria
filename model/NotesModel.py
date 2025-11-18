@@ -14,7 +14,7 @@ class NoteModel(QObject):
     data_changed = pyqtSignal()
     settings_changed = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.open_files: Dict[str, str] = {}
         self.unsaved_files: set[str] = set()
@@ -32,7 +32,7 @@ class NoteModel(QObject):
             pass
         return defaults
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         """Saves current settings to JSON."""
         try:
             with open("settings.json", "w") as f:
@@ -40,7 +40,7 @@ class NoteModel(QObject):
         except IOError as e:
             print(f"Error saving settings: {e}")
 
-    def update_setting(self, key: str, value):
+    def update_setting(self, key: str, value) -> None:
         """Updates a setting and emits the settings_changed signal."""
         self.settings[key] = value
         self.save_settings()
@@ -62,7 +62,7 @@ class NoteModel(QObject):
                 return False
         return True
 
-    def save_file(self, filepath: str, content: str):
+    def save_file(self, filepath: str, content: str) -> None:
         """Saves content to a file."""
         try:
             with open(filepath, "w", encoding="utf-8") as f:
@@ -74,7 +74,7 @@ class NoteModel(QObject):
         except IOError as e:
             print(f"Error saving file {filepath}: {e}")
 
-    def save_new_file(self, old_path: str, new_path: str, content: str):
+    def save_new_file(self, old_path: str, new_path: str, content: str) -> None:
         """Saves an untitled file to a new path, updating the internal state."""
         del self.open_files[old_path]
         if old_path in self.unsaved_files:
@@ -84,7 +84,7 @@ class NoteModel(QObject):
         self.save_file(new_path, content)
         self.data_changed.emit()
 
-    def close_file(self, filepath: str):
+    def close_file(self, filepath: str) -> None:
         """Closes a file and emits a signal."""
         if filepath in self.open_files:
             del self.open_files[filepath]
@@ -92,7 +92,7 @@ class NoteModel(QObject):
                 self.unsaved_files.remove(filepath)
             self.data_changed.emit()
 
-    def create_new_file(self):
+    def create_new_file(self) -> str:
         """Creates a new, empty 'untitled' file in the model."""
         filepath = f"Untitled-{self._untitled_counter}.md"
         while filepath in self.open_files:
@@ -105,13 +105,13 @@ class NoteModel(QObject):
         self.data_changed.emit()
         return filepath
 
-    def mark_as_unsaved(self, filepath: str):
+    def mark_as_unsaved(self, filepath: str) -> None:
         """Marks a file as having unsaved changes."""
         if filepath not in self.unsaved_files:
             self.unsaved_files.add(filepath)
             self.data_changed.emit()
 
-    def update_content(self, filepath: str, content: str):
+    def update_content(self, filepath: str, content: str) -> None:
         """Updates content in memory without saving to disk."""
         if filepath in self.open_files:
             self.open_files[filepath] = content

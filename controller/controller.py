@@ -17,7 +17,7 @@ class Controller(QObject):
 
     start_ai_query = pyqtSignal(str)
 
-    def __init__(self, model, view, index_manager):
+    def __init__(self, model, view, index_manager) -> None:
         super().__init__()
         self._model = model
         self._view = view
@@ -51,32 +51,38 @@ class Controller(QObject):
 
         self.ai_thread.start()
 
-    def show(self):
+    def show(self) -> None:
+        """Display everything"""
         self._view.show()
 
-    def open_folder(self):
+    def open_folder(self) -> None:
+        """Open a folder Menu"""
         path = QFileDialog.getExistingDirectory(self._view, "Open Folder")
         if path:
             self._view.set_file_tree_root(path)
 
-    def new_file(self):
+    def new_file(self) -> None:
+        """Create a new file"""
         new_path = self._model.create_new_file()
         self.focus_tab(new_path)
 
-    def open_settings(self):
+    def open_settings(self) -> None:
+        """Open Settings menu"""
         dialog = SettingsDialog(self._model.settings, self._view)
         if dialog.exec():
             new_settings = dialog.get_settings()
             for key, value in new_settings.items():
                 self._model.update_setting(key, value)
 
-    def on_file_tree_dclick(self, index):
+    def on_file_tree_dclick(self, index) -> None:
+        """Open notes from left menu"""
         filepath = self._view.file_model.filePath(index)
         if os.path.isfile(filepath) and filepath.endswith(".md"):
             self._model.open_file(filepath)
             self.focus_tab(filepath)
 
-    def close_tab(self, index):
+    def close_tab(self, index) -> None:
+        """Menu for managing tab closing"""
         filepath = self._view.tab_widget.widget(index).filepath
         if filepath in self._model.unsaved_files:
             reply = QMessageBox.question(
@@ -92,7 +98,7 @@ class Controller(QObject):
 
         self._model.close_file(filepath)
 
-    def on_model_data_changed(self):
+    def on_model_data_changed(self) -> None:
         """Update the tabs in the view to reflect the model's state."""
         open_files = self._model.open_files
         current_tabs = {
@@ -124,7 +130,7 @@ class Controller(QObject):
                 index = current_tabs[path]
                 self._view.tab_widget.setTabText(index, title)
 
-    def on_editor_text_changed(self, filepath):
+    def on_editor_text_changed(self, filepath) -> None:
         """
         When user types, get content from the active widget,
         update model, and mark as unsaved.
@@ -136,7 +142,7 @@ class Controller(QObject):
             self._model.update_content(filepath, content)
             self._model.mark_as_unsaved(filepath)
 
-    def save_current_file(self):
+    def save_current_file(self) -> None:
         """Saving is now simple and synchronous again."""
         filepath = self._view.get_current_filepath()
         if not filepath:
@@ -151,11 +157,12 @@ class Controller(QObject):
             )
             if new_filepath:
                 self._model.save_new_file(filepath, new_filepath, content)
+                self._index_manager.update_file_node(new_filepath)
         else:
             self._model.save_file(filepath, content)
             self._index_manager.update_file_node(filepath)
 
-    def on_model_settings_changed(self):
+    def on_model_settings_changed(self) -> None:
         """Apply new settings to the application."""
         self._current_font = self.get_font_from_settings()
         for i in range(self._view.tab_widget.count()):
@@ -164,12 +171,13 @@ class Controller(QObject):
                 tab.setFont(self._current_font)
                 tab.update_highlighter_formats()
 
-    def get_font_from_settings(self):
+    def get_font_from_settings(self) -> QFont:
+        """Get the font the app is using"""
         family = self._model.get_setting("font_family", "Consolas")
         size = self._model.get_setting("font_size", 12)
         return QFont(family, size)
 
-    def focus_tab(self, filepath):
+    def focus_tab(self, filepath) -> None:
         """Sets the currently visible tab to the one
         with the given filepath."""
         for i in range(self._view.tab_widget.count()):
@@ -177,11 +185,11 @@ class Controller(QObject):
                 self._view.tab_widget.setCurrentIndex(i)
                 break
 
-    def get_initial_font(self):
+    def get_initial_font(self) -> None:
         """Returns the font created from the initial settings."""
         return self._current_font
 
-    def save_all_unsaved_files(self):
+    def save_all_unsaved_files(self) -> None:
         """Iterate through all unsaved files and save their content."""
         for filepath in list(self._model.unsaved_files):
             if filepath.startswith("Untitled-"):
@@ -194,7 +202,7 @@ class Controller(QObject):
                 content = tab_widget.get_content()
                 self._model.save_file(filepath, content)
 
-    def handle_exit_request(self, event):
+    def handle_exit_request(self, event) -> None:
         """
         Called by the View's closeEvent. Determines if the app should close.
         """
@@ -205,9 +213,7 @@ class Controller(QObject):
         dialog = QMessageBox(self._view)
         dialog.setIcon(QMessageBox.Icon.Warning)
         dialog.setText("You have unsaved changes.")
-        dialog.setInformativeText(
-            "Do you want to save your" + "changes before exiting?"
-        )
+        dialog.setInformativeText("Do you want to save your changes before exiting?")
         dialog.setStandardButtons(
             QMessageBox.StandardButton.Save
             | QMessageBox.StandardButton.Discard
@@ -225,7 +231,7 @@ class Controller(QObject):
         else:
             event.ignore()
 
-    def cleanup_thread(self):
+    def cleanup_thread(self) -> None:
         """Safely stops the worker thread."""
         if self.ai_thread.isRunning():
             print("Quitting AI worker thread...")
@@ -233,7 +239,7 @@ class Controller(QObject):
             self.ai_thread.wait()  # Wait for the thread to fully stop
             print("AI worker thread finished.")
 
-    def handle_send_chat_message(self):
+    def handle_send_chat_message(self) -> None:
         """
         Slot that is called when the user clicks 'Send' or presses Enter.
         """
@@ -248,17 +254,15 @@ class Controller(QObject):
         self.start_ai_query.emit(user_text)
 
     @pyqtSlot(str)
-    def handle_ai_response(self, ai_text):
+    def handle_ai_response(self, ai_text) -> None:
         """
         This slot runs in the main GUI thread, so it's safe to update the UI.
         """
         chat_widget = self._view.chat_widget
-        # Here you would ideally replace the "Thinking..." message,
-        # but for simplicity, we'll just append the answer.
-        chat_widget.add_message("AI", ai_text)
+        chat_widget.add_message("BoA", ai_text)
 
     @pyqtSlot(str)
-    def handle_ai_error(self, error_message):
+    def handle_ai_error(self, error_message) -> None:
         """Handles any errors that occurred in the worker thread."""
         chat_widget = self._view.chat_widget
         chat_widget.add_message("System", f"An error occurred: {error_message}")
