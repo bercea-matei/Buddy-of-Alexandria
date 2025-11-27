@@ -19,8 +19,8 @@ DB_DIR = "chroma_db"
 CHROMA_DB_PATH = os.path.join(PERSIST_DIR, DB_DIR)
 CHROMA_DB_COLLECTION = "quickstart"
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-CHUNK_SIZE = 512
-CHUNK_OVERLAP = 120
+CHUNK_SIZE = 384
+CHUNK_OVERLAP = 52
 
 
 class IndexManager:
@@ -83,11 +83,6 @@ class IndexManager:
             # should never really happen
             # we are creating a db at startup if not found
         else:
-            # storage_context = StorageContext.from_defaults(
-            #    vector_store=self.vector_store, persist_dir=PERSIST_DIR
-            # )
-
-            # index = load_index_from_storage(storage_context=storage_context)
             if not self.index:
                 self.re_build_all()
             retriever_engine = self.index.as_retriever()
