@@ -2,10 +2,12 @@
 
 from PyQt6.QtWidgets import (
     QTextEdit,
+    QApplication,
 )
 from PyQt6.QtGui import (
     QTextListFormat,
     QTextCursor,
+    QKeySequence,
 )
 from PyQt6.QtGui import (
     QColor,
@@ -107,3 +109,17 @@ class LiveMarkdownEditor(QTextEdit):
         """Refresh the formats"""
         if hasattr(self, "highlighter"):
             self.highlighter.update_formats()
+
+    def keyPressEvent(self, event):
+        """
+        Overrides the default key press event to handle paste operations.
+        """
+        if event.matches(QKeySequence.StandardKey.Paste):
+            clipboard = QApplication.clipboard()
+            text = clipboard.text()
+
+            self.textCursor().insertText(text)
+
+            event.accept()
+        else:
+            super().keyPressEvent(event)

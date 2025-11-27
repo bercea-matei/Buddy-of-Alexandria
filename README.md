@@ -44,6 +44,7 @@ Feel free to explore, but please be aware that features may change.
 	- Bold
 	- Strike-through 
 	- Bullet points (kinda)
+    - Text Block
 - Tabs for multiple files open at the same time
 - Font size and style changes (requires restart to take effect)
 
