@@ -4,6 +4,8 @@ import json
 from PyQt6.QtCore import QObject, pyqtSignal
 from typing import Dict
 
+import os
+
 
 class NoteModel(QObject):
     """
@@ -115,3 +117,39 @@ class NoteModel(QObject):
         """Updates content in memory without saving to disk."""
         if filepath in self.open_files:
             self.open_files[filepath] = content
+
+    def rename_file(self, old_path: str, new_name: str) -> bool:
+        """Renames a file on disk and updates the internal state."""
+        if old_path not in self.open_files:
+            return False  # Should not happen, but good to be safe
+
+        directory = os.path.dirname(old_path)
+        new_path = os.path.join(directory, new_name)
+
+        if os.path.exists(new_path):
+            print(f"Error: File '{new_path}' already exists.")
+            return False
+
+        try:
+            os.rename(old_path, new_path)
+
+            content = self.open_files.pop(old_path)
+            self.open_files[new_path] = content
+
+            if old_path in self.unsaved_files:
+                self.unsaved_files.remove(old_path)
+                self.unsaved_files.add(new_path)
+
+            self.data_changed.emit()
+            return True
+        except OSError as e:
+            print(f"Error renaming file: {e}")
+            return False
+
+    def delete_file(self, filepath: str):
+        """Deletes a file from disk and closes it if it's open."""
+        try:
+            os.remove(filepath)
+            self.close_file(filepath)
+        except OSError as e:
+            print(f"Error deleting file: {e}")

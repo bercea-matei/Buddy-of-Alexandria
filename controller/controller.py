@@ -1,7 +1,7 @@
 # controller.py
 
 import os
-from PyQt6.QtWidgets import QFileDialog, QMessageBox, QApplication
+from PyQt6.QtWidgets import QFileDialog, QMessageBox, QApplication, QInputDialog
 from PyQt6.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QFont
 
@@ -26,15 +26,15 @@ class Controller(QObject):
         if hasattr(self._view, "chat_widget"):
             self._view.chat_widget.controller = self
 
-        # Connect signals from view to controller slots
         self._view.open_folder_action.triggered.connect(self.open_folder)
         self._view.new_file_action.triggered.connect(self.new_file)
         self._view.save_file_action.triggered.connect(self.save_current_file)
         self._view.settings_action.triggered.connect(self.open_settings)
         self._view.file_tree.doubleClicked.connect(self.on_file_tree_dclick)
         self._view.tab_widget.tabCloseRequested.connect(self.close_tab)
+        self._view.rename_file_action.triggered.connect(self.rename_current_file)
+        self._view.delete_file_action.triggered.connect(self.delete_current_file)
 
-        # Connect signals from model to view/controller slots
         self._model.data_changed.connect(self.on_model_data_changed)
         self._model.settings_changed.connect(self.on_model_settings_changed)
 
@@ -68,6 +68,44 @@ class Controller(QObject):
         """Create a new file"""
         new_path = self._model.create_new_file()
         self.focus_tab(new_path)
+
+    def rename_current_file(self):
+        filepath = self._view.get_current_filepath()
+        if not filepath:
+            return
+
+        current_name = os.path.basename(filepath)
+        new_name, ok = QInputDialog.getText(
+            self._view, "Rename File", "Enter new name:", text=current_name
+        )
+
+        if ok and new_name and new_name != current_name:
+            if not new_name.endswith(".md"):
+                new_name += ".md"
+
+            if not self._model.rename_file(filepath, new_name):
+                QMessageBox.warning(
+                    self._view,
+                    "Rename Failed",
+                    f"Could not rename to '{new_name}'. The file may already exist.",
+                )
+
+    def delete_current_file(self):
+        filepath = self._view.get_current_filepath()
+        if not filepath:
+            return  # No file is open
+
+        filename = os.path.basename(filepath)
+        reply = QMessageBox.question(
+            self._view,
+            "Confirm Delete",
+            f"Are you sure you want to permanently delete '{filename}'?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+
+        if reply == QMessageBox.StandardButton.Yes:
+            self._model.delete_file(filepath)
 
     def open_settings(self) -> None:
         """Open Settings menu"""

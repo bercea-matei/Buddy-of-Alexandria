@@ -10,9 +10,13 @@ from PyQt6.QtWidgets import (
     QTreeView,
     QTabWidget,
     QDockWidget,
+    QToolBar,
+    QPushButton,
+    QSizePolicy,
 )
 from PyQt6.QtGui import (
     QFileSystemModel,
+    QIcon,
 )
 from PyQt6.QtCore import (
     QDir,
@@ -43,9 +47,10 @@ class MainView(QMainWindow):
         self.setWindowTitle("Buddy of Alexandria")
         self.setGeometry(100, 100, 1400, 900)
 
-        self._create_widgets()
         self._create_docks()
         self._create_menu()
+        self._create_toolbar()
+        self._create_widgets()
         self._load_stylesheet()
 
     def set_controller(self, controller) -> None:
@@ -61,8 +66,9 @@ class MainView(QMainWindow):
         """Populate Main Window with widgets"""
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
-
         main_layout = QHBoxLayout(main_widget)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
         splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(splitter)
 
@@ -94,9 +100,34 @@ class MainView(QMainWindow):
         self.tab_widget = QTabWidget()
         self.tab_widget.setTabsClosable(True)
         self.tab_widget.setMovable(True)
+        self.tab_widget.setDocumentMode(True)
+
+        # self._setup_new_tab_button()
+
+        size_policy = self.tab_widget.sizePolicy()
+        size_policy.setVerticalPolicy(QSizePolicy.Policy.Expanding)
+        self.tab_widget.setSizePolicy(size_policy)
+
         splitter.addWidget(self.tab_widget)
 
         splitter.setSizes([250, 1150])
+
+    def _setup_new_tab_button(self):
+        """TODO/DEPRECATED - DECIDE LATER"""
+        button_container = QWidget()
+
+        button_layout = QHBoxLayout(button_container)
+        button_layout.setContentsMargins(0, 0, 4, 0)
+        button_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+
+        self.new_tab_button = QPushButton("+")
+        self.new_tab_button.setToolTip("New File")
+        self.new_tab_button.setFixedSize(32, 32)
+        self.new_tab_button.setObjectName("newFileButton")
+
+        button_layout.addWidget(self.new_tab_button)
+
+        self.tab_widget.setCornerWidget(button_container)
 
     def _create_docks(self) -> None:
         """Creates all the dockable widgets for the application."""
@@ -112,23 +143,6 @@ class MainView(QMainWindow):
     def _create_menu(self) -> None:
         """Menu for settings and preferences"""
         menu_bar = self.menuBar()
-        file_menu = menu_bar.addMenu("&File")
-
-        self.open_folder_action = QAction("&Open Folder...", self)
-        file_menu.addAction(self.open_folder_action)
-
-        self.new_file_action = QAction("&New File", self)
-        self.new_file_action.setShortcut(QKeySequence.StandardKey.New)
-        file_menu.addAction(self.new_file_action)
-
-        self.save_file_action = QAction("&Save", self)
-        self.save_file_action.setShortcut(QKeySequence.StandardKey.Save)
-        file_menu.addAction(self.save_file_action)
-
-        file_menu.addSeparator()
-        self.exit_action = QAction("&Exit", self)
-        self.exit_action.triggered.connect(self.close)
-        file_menu.addAction(self.exit_action)
 
         view_menu = menu_bar.addMenu("&View")
         view_menu.addAction(self.ai_chat_dock.toggleViewAction())
@@ -136,6 +150,38 @@ class MainView(QMainWindow):
         tools_menu = menu_bar.addMenu("&Tools")
         self.settings_action = QAction("&Settings...", self)
         tools_menu.addAction(self.settings_action)
+
+        self.open_folder_action = QAction("&Open Folder...", self)
+        tools_menu.addAction(self.open_folder_action)
+
+    def _create_toolbar(self) -> None:
+        """Toolbar menu for easy access buttons"""
+        toolbar = QToolBar("Main ToolBar")
+        toolbar.setMovable(False)
+        # toolbar.setIconSize(QSize(40, 40))
+        self.addToolBar(toolbar)
+
+        self.new_file_action = QAction("&New File", self)
+        self.new_file_action.setShortcut(QKeySequence.StandardKey.New)
+        toolbar.addAction(self.new_file_action)
+
+        self.save_file_action = QAction(QIcon.fromTheme("document-save"), "&Save", self)
+        self.save_file_action.setShortcut(QKeySequence.StandardKey.Save)
+        toolbar.addAction(self.save_file_action)
+
+        self.rename_file_action = QAction(
+            QIcon.fromTheme("edit-rename"), "&Rename", self
+        )
+        # self.rename_file_action.setShortcut(QKeySequence.StandardKey.)
+        toolbar.addAction(self.rename_file_action)
+
+        self.delete_file_action = QAction(
+            QIcon.fromTheme("edit-delete"), "&Delete", self
+        )
+        # self.delete_file_action.setShortcut(QKeySequence.StandardKey.Delete)
+        toolbar.addAction(self.delete_file_action)
+
+        toolbar.addSeparator()
 
     def _load_stylesheet(self) -> None:
         """Make it pretty"""
