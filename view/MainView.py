@@ -221,3 +221,6 @@ class MainView(QMainWindow):
         Delegate the decision-making to the controller.
         """
         self.controller.handle_exit_request(event)
+
+    def disable_ai_features(self) -> None:
+        self.summarize_file_action.setEnabled(False)

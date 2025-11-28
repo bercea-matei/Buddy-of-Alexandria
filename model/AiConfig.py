@@ -6,13 +6,14 @@ import ollama
 
 
 def full_local_ai_config() -> bool:
-    _ensure_ollama_running()
-    if not _ensure_model_available():
-        return False
-    return True
+    if _ensure_ollama_running():
+        if not _ensure_model_available():
+            return False
+        return True
+    return False
 
 
-def _ensure_ollama_running() -> None:
+def _ensure_ollama_running() -> bool:
     """
     Checks if Ollama is running. If not, tries to start it.
     Returns True if successful, False if Ollama is not installed.

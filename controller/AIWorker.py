@@ -41,14 +41,26 @@ class AIWorker(QObject):
         except Exception as e:
             self.error_occurred.emit(f"Error reading file: {e}")
             return
+        try:
+            prompt = (
+                "You are a precise summarization engine. You must generate a"
+                + "SUMMARY based ONLY on the provided text. Do not use any outside knowledge."
+                + "If the provided text contains incorrect information, summarize it exactly "
+                + "as written and don't mention the wrong information or its correction.\n\n "
+                + {text_content}
+            )
+            resp = self.llm.stream_complete(prompt)
 
-        prompt = f"You are a precise summarization engine. You must generate a SUMMARY based ONLY on the provided text. Do not use any outside knowledge. If the provided text contains incorrect information, summarize it exactly as written and don't mention the wrong information or its correction.\n\n{text_content}"
+            for r in resp:
+                self.result_ready.emit(r.delta)
+            self.finished_stream.emit()
+        except Exception as e:
+            self.finished_stream.emit()
+            error_message = f"AI Error: {str(e)}"
+            if "ConnectionError" in str(e):
+                error_message = "Lost connection to AI Engine. Is Ollama running?"
 
-        resp = self.llm.stream_complete(prompt)
-
-        for r in resp:
-            self.result_ready.emit(r.delta)
-        self.finished_stream.emit()
+            self.result_ready.emit(error_message)
 
 
 """

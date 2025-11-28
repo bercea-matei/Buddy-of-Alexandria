@@ -19,11 +19,12 @@ class Controller(QObject):
     start_ai_summarization = pyqtSignal(str)
     # start_ai_chat_prompt = pyqtSignal(str)
 
-    def __init__(self, model, view, index_manager) -> None:
+    def __init__(self, model, view, index_manager, ai_is_running) -> None:
         super().__init__()
         self._model = model
         self._view = view
         self._index_manager = index_manager
+        self.ai_is_running = ai_is_running
         self._current_font = self.get_font_from_settings()
         if hasattr(self._view, "chat_widget"):
             self._view.chat_widget.controller = self
@@ -38,6 +39,11 @@ class Controller(QObject):
         self._view.delete_file_action.triggered.connect(self.delete_current_file)
         self._view.summarize_file_action.triggered.connect(self.summarize_current_file)
         # self._view.chat_prompt_action.triggered.connect(self.chat_prompt)
+        if not self.ai_is_running:
+            self._view.chat_widget.set_disabled_state(
+                "AI functionalities are unavailable\n Ollama is not running."
+            )
+            self._view.disable_ai_features()
 
         self._model.data_changed.connect(self.on_model_data_changed)
         self._model.settings_changed.connect(self.on_model_settings_changed)

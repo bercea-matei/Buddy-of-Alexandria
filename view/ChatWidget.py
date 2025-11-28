@@ -78,3 +78,8 @@ class ChatWidget(QWidget):
             cursor.movePosition(QTextCursor.MoveOperation.End)
             cursor.insertText(text_chunk)
             last_widget.ensureCursorVisible()
+
+    def set_disabled_state(self, reason_msg: str = "idk") -> None:
+        self.send_button.setEnabled(False)
+        self.input_box.setEnabled(False)
+        self.add_message("System", reason_msg)
