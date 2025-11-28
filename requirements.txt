@@ -1,17 +1,21 @@
-# Application Dependencies
+# --- The App (GUI) ---
 PyQt6
 PyQt6-WebEngine
 Markdown
-llama-index
-llama-index-vector-stores-chroma
-llama-index-embeddings-huggingface
-llama-index-core
-llama-index-llms-openai
-llama-index-llms-replicate
-llama-index-embeddings-huggingface
+platformdirs
 
-# Development & Build Dependencies
+# --- The AI Brain (LlamaIndex Specifics) ---
+llama-index-core
+llama-index-llms-ollama
+llama-index-embeddings-huggingface
+llama-index-vector-stores-chroma
+llama-index-readers-file
+
+# --- The Database & Client ---
+chromadb
+ollama
+
+# --- Development & Testing ---
 pytest
 pytest-qt
 black
-pyinstaller
