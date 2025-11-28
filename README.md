@@ -13,8 +13,9 @@ Feel free to explore, but please be aware that features may change.
 
 ### 🗺️ Roadmap
 - [x] Vector Database & embedding process (search based on meaning not keywords)
-    - [ ] Let the user choose the result they want? 
 - [ ] Add AI summarization of notes (RAG)
+    - [x] summarize current open note
+    - [ ] summarize an idea (checks all notes)
 - [ ] Suggestions
 	- [ ] suggest ares of improvements (where to fill gaps and not how to fill them)
 	- [ ] suggest further exploration topic (gives direction)
