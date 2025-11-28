@@ -73,6 +73,7 @@ ollama list
 
 ### 🖼️ Current Status
 - We have a summarize button at the top of the taskbar that will make a resume of the current open file (the one the user is focused on)
+- Also, if there are problems with the ai, the app will start in a minimal state with all ai features not avalabile
 
 ### ⚙️ Current editor features
 - Left side file tree
