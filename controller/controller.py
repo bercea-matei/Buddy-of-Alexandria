@@ -16,6 +16,8 @@ class Controller(QObject):
     """Connects the Model and the View."""
 
     start_ai_query = pyqtSignal(str)
+    start_ai_summarization = pyqtSignal(str)
+    # start_ai_chat_prompt = pyqtSignal(str)
 
     def __init__(self, model, view, index_manager) -> None:
         super().__init__()
@@ -34,6 +36,8 @@ class Controller(QObject):
         self._view.tab_widget.tabCloseRequested.connect(self.close_tab)
         self._view.rename_file_action.triggered.connect(self.rename_current_file)
         self._view.delete_file_action.triggered.connect(self.delete_current_file)
+        self._view.summarize_file_action.triggered.connect(self.summarize_current_file)
+        # self._view.chat_prompt_action.triggered.connect(self.chat_prompt)
 
         self._model.data_changed.connect(self.on_model_data_changed)
         self._model.settings_changed.connect(self.on_model_settings_changed)
@@ -43,11 +47,16 @@ class Controller(QObject):
         self.ai_worker.moveToThread(self.ai_thread)
 
         self.start_ai_query.connect(self.ai_worker.run_query)
+        self.start_ai_summarization.connect(self.ai_worker.summarize_prompt)
+        # self.start_ai_chat_prompt.connect(self.ai_worker.chat_prompt)
         self.ai_worker.result_ready.connect(self.handle_ai_response)
+        self.ai_worker.finished_stream.connect(self.handle_ai_finished)
         self.ai_worker.error_occurred.connect(self.handle_ai_error)
         app = QApplication.instance()
         if app:
             app.aboutToQuit.connect(self.cleanup_thread)
+
+        self.is_ai_replying = False
 
         self.ai_thread.start()
 
@@ -290,17 +299,49 @@ class Controller(QObject):
         if not user_text.strip():
             return
         chat_widget.add_message("User", user_text)
-        chat_widget.add_message("BoA", "Hmm...")
+        # chat_widget.add_message("BoA", "Hmm...")
 
         self.start_ai_query.emit(user_text)
+
+    def summarize_current_file(self) -> None:
+        """"""
+        filepath = self._view.get_current_filepath()
+        if not filepath:
+            return
+        self.start_ai_summarization.emit(filepath)
 
     @pyqtSlot(str)
     def handle_ai_response(self, ai_text) -> None:
         """
-        This slot runs in the main GUI thread, so it's safe to update the UI.
+        Adds the Ai response to the chat.
         """
         chat_widget = self._view.chat_widget
-        chat_widget.add_message("BoA", ai_text)
+
+        if not self.is_ai_replying:
+            self.is_ai_replying = True
+            chat_widget.add_message("\nBoA", "")
+            chat_widget.append_to_last_message(ai_text)
+        else:
+            chat_widget.append_to_last_message(ai_text)
+
+    def append_to_last_message(self, text_chunk) -> None:
+        """
+        Appends text to the last message.
+        """
+        count = self.layout.count()
+        if count > 0:
+            last_item = self.layout.itemAt(count - 1).widget()
+
+            current_text = last_item.text()
+            last_item.setText(current_text + text_chunk)
+
+            self.scroll_area.verticalScrollBar().setValue(
+                self.scroll_area.verticalScrollBar().maximum()
+            )
+
+    @pyqtSlot()
+    def handle_ai_finished(self):
+        self.is_ai_replying = False
 
     @pyqtSlot(str)
     def handle_ai_error(self, error_message) -> None:

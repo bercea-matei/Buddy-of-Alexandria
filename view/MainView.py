@@ -183,6 +183,10 @@ class MainView(QMainWindow):
 
         toolbar.addSeparator()
 
+        self.summarize_file_action = QAction("&Summarize", self)
+        self.summarize_file_action.setShortcut(QKeySequence.StandardKey.Print)
+        toolbar.addAction(self.summarize_file_action)
+
     def _load_stylesheet(self) -> None:
         """Make it pretty"""
         style_sheet = "assets/styles.qss"
