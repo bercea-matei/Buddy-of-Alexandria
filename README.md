@@ -2,14 +2,52 @@
 **🧠Your intelligent second brain, turning scattered notes into structured knowledge.**
 
 This application is a dedicated learning companion that bridges the gap between note-taking and studying, empowering you to learn smarter not harder:
- - **Boost Engagement:** Visualize your progress and discover new topics with dynamic roadmaps and intelligent suggestions.   
+- **Boost Engagement:** Visualize your progress and discover new topics with dynamic roadmaps and intelligent suggestions.   
 - **Maximize Retention:** Transform passive notes into active knowledge using fully customizable quizzes and testing frameworks.
 
 ### ⚠️ This Project is a Work in Progress
-
 Welcome! This app is currently being built as a learning experience to explore AI integration in productivity tools. As a **prototype**, its primary goal is to showcase concepts rather than to be polished, full-featured application.
 
 Feel free to explore, but please be aware that features may change.
+
+### 🔧 How to run
+1) install ollama
+	- Linux
+		```
+			run: curl -fsSL https://ollama.com/install.sh | sh
+		```
+	- Windows
+		```
+			https://ollama.com/download/windows
+		```
+	- Mac
+		```
+			https://ollama.com/download/mac
+		```
+2) make sure server is running
+	- Linux
+		```
+		ollama serve &
+		```
+	- Windows
+		Should start automatically but you can manually **Ollama** launch it if you search for the app.
+	- Mac
+		Open the **Ollama** application from your Applications folder.
+			
+3) run app
+	```
+	python3 main.py
+	```
+
+In case the ai model did not download automatically run:
+```
+ollama pull phi3:mini
+```
+To verify if **Ollama** is running type the following into a terminal:
+```
+ollama list
+```
+
 
 ### 🗺️ Roadmap
 - [x] Vector Database & embedding process (search based on meaning not keywords)
@@ -33,11 +71,10 @@ Feel free to explore, but please be aware that features may change.
 - [ ] Check notes integrity
 - [ ] Create Roadmap / Course
 
-### 🖼️ Current Status:
-- Just rushed a simple rough markdown editor (no AI)
-- From here on-wards we will add the AI features
+### 🖼️ Current Status
+- We have a summarize button at the top of the taskbar that will make a resume of the current open file (the one the user is focused on)
 
-### ⚙️ Current editor features:
+### ⚙️ Current editor features
 - Left side file tree
 - Markdown editor (simulated) for:
 	- Headline (1 to 6 #'s)

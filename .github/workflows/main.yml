@@ -4,7 +4,7 @@ on: push
 
 jobs:
   lint-the-code:
-    name: All checks then build
+    name: Black linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,7 +24,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-      
+
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama Server
+        run: ollama serve &
+
+      - name: Pull Model
+        run: |
+          sleep 5 # wait for server to boot
+          ollama pull phi3:mini
+
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with: 
