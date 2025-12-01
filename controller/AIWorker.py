@@ -47,7 +47,7 @@ class AIWorker(QObject):
                 + "SUMMARY based ONLY on the provided text. Do not use any outside knowledge."
                 + "If the provided text contains incorrect information, summarize it exactly "
                 + "as written and don't mention the wrong information or its correction.\n\n "
-                + {text_content}
+                + text_content
             )
             resp = self.llm.stream_complete(prompt)
 
