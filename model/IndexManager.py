@@ -129,7 +129,11 @@ class IndexManager:
                 self.re_build_all()
             if not self.index:
                 return "There is no info that can be used. Please create/add a note."
-            retriever_engine = self.index.as_retriever()
+            retriever_engine = self.index.as_retriever(
+                similarity_top_k=15, similarity_cutoff=0.65
+            )
             response = retriever_engine.retrieve(query_msg)
 
-            return sorted(response, key=lambda x: x.score, reverse=True)[0].text
+            res_resp = sorted(response, key=lambda x: x.score, reverse=True)
+            text_chunks = [n.node.text for n in res_resp]
+            return "\n".join(text_chunks)

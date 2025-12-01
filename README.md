@@ -53,12 +53,13 @@ ollama list
 - [x] Vector Database & embedding process (search based on meaning not keywords)
 - [ ] Add AI summarization of notes (RAG)
     - [x] summarize current open note
-    - [ ] summarize an idea (checks all notes)
+    - [X] summarize an idea (checks all notes)
+    - [ ] agentic RAG?
+- [ ] Tags
+    - [ ] tags suggestion
 - [ ] Suggestions
 	- [ ] suggest ares of improvements (where to fill gaps and not how to fill them)
 	- [ ] suggest further exploration topic (gives direction)
-- [ ] Tags
-- [ ] Tags suggestion
 - [ ] Customizable tests
 	- [ ] duration slider
 	- [ ] difficulty slider
@@ -69,11 +70,12 @@ ollama list
 	- [ ] quick definition (foreign word)
 	- [ ] expansion (go more in depth)
 - [ ] Check notes integrity
-- [ ] Create Roadmap / Course
+- [ ] Generate Roadmap / Course
 
 ### 🖼️ Current Status
-- We have a summarize button at the top of the taskbar that will make a resume of the current open file (the one the user is focused on)
-- Also, if there are problems with the ai, the app will start in a minimal state with all ai features not avalabile
+- We have a summarize button at the top of the taskbar that will make a resume of the current open file (the one the user is focused on).
+- Also the the chat window will be able to summarize your concepts across multiple notes as opposed to simple data retrieval like in previous versions.
+- Next in line are tags as they help elevate the quality of those summaries.
 
 ### ⚙️ Current editor features
 - Left side file tree

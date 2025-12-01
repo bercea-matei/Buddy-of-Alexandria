@@ -17,7 +17,6 @@ class Controller(QObject):
 
     start_ai_query = pyqtSignal(str)
     start_ai_summarization = pyqtSignal(str)
-    # start_ai_chat_prompt = pyqtSignal(str)
 
     def __init__(self, model, view, index_manager, ai_is_running) -> None:
         super().__init__()
@@ -54,7 +53,6 @@ class Controller(QObject):
 
         self.start_ai_query.connect(self.ai_worker.run_query)
         self.start_ai_summarization.connect(self.ai_worker.summarize_prompt)
-        # self.start_ai_chat_prompt.connect(self.ai_worker.chat_prompt)
         self.ai_worker.result_ready.connect(self.handle_ai_response)
         self.ai_worker.finished_stream.connect(self.handle_ai_finished)
         self.ai_worker.error_occurred.connect(self.handle_ai_error)
@@ -297,7 +295,7 @@ class Controller(QObject):
 
     def handle_send_chat_message(self) -> None:
         """
-        Slot that is called when the user clicks 'Send' or presses Enter.
+        Slot called to respond to the user's chat question
         """
         chat_widget = self._view.chat_widget
         user_text = chat_widget.get_input_text()
@@ -305,7 +303,6 @@ class Controller(QObject):
         if not user_text.strip():
             return
         chat_widget.add_message("User", user_text)
-        # chat_widget.add_message("BoA", "Hmm...")
 
         self.start_ai_query.emit(user_text)
 
