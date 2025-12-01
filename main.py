@@ -3,6 +3,7 @@
 from view.MainView import MainView
 from controller.controller import Controller
 from model.IndexManager import IndexManager
+from model.AiConfig import full_local_ai_config
 
 import sys
 from PyQt6.QtWidgets import QApplication
@@ -22,12 +23,13 @@ if __name__ == "__main__":
         print("CI Environment detected. Skipping Ollama startup checks.")
         ai_is_running = False
     else:
-        # if not full_local_ai_config():
-        # print("Critical Error: Could not start AI backend. +
-        # starting in minimal mode.")
-        # else
-        # ai_is_running = True
-        pass
+        if not full_local_ai_config():
+            print(
+                "Critical Error: Could not start AI backend. "
+                + "starting in minimal mode."
+            )
+        else:
+            ai_is_running = True
 
     model = NoteModel()
     view = MainView()

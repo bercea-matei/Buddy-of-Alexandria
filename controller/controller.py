@@ -314,6 +314,9 @@ class Controller(QObject):
         filepath = self._view.get_current_filepath()
         if not filepath:
             return
+        if not filepath or not os.path.exists(filepath):
+            self._view.chat_widget.add_message("System", "Please save the file first!")
+            return
         self.start_ai_summarization.emit(filepath)
 
     @pyqtSlot(str)
